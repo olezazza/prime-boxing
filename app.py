@@ -33,12 +33,11 @@ login_manager.login_view = 'login'
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
-    # SECURE PASSWORD LENGTH (Fixed)
     password = db.Column(db.String(255), nullable=False)
 
 class Workout(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    day = db.Column(db.String(20), nullable=False)
+    day = db.Column(db.String(50), nullable=False)  # Increased length for "Monday - Saturday"
     day_order = db.Column(db.Integer, nullable=False)
     time = db.Column(db.String(20), nullable=False)
     class_name = db.Column(db.String(100), nullable=False)
@@ -65,9 +64,12 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 class WorkoutForm(FlaskForm):
+    # UPDATED: Added generic options (0 and 8)
     day = SelectField('Day', choices=[
-        ('1', 'Monday'), ('2', 'Tuesday'), ('3', 'Wednesday'),
-        ('4', 'Thursday'), ('5', 'Friday'), ('6', 'Saturday'), ('7', 'Sunday')
+        ('0', 'MONDAY - SATURDAY'),
+        ('8', 'MONDAY - FRIDAY'),
+        ('1', 'MONDAY'), ('2', 'TUESDAY'), ('3', 'WEDNESDAY'),
+        ('4', 'THURSDAY'), ('5', 'FRIDAY'), ('6', 'SATURDAY'), ('7', 'SUNDAY')
     ])
     time = StringField('Time (e.g. 19:00)', validators=[DataRequired()])
     class_name = StringField('Class Name', validators=[DataRequired()])
@@ -135,8 +137,21 @@ def logout():
 def create_workout():
     form = WorkoutForm()
     if form.validate_on_submit():
-        days_map = {'1':'Monday', '2':'Tuesday', '3':'Wednesday', '4':'Thursday', '5':'Friday', '6':'Saturday', '7':'Sunday'}
-        workout = Workout(day=days_map[form.day.data], day_order=int(form.day.data), time=form.time.data, class_name=form.class_name.data, coach=form.coach.data)
+        # UPDATED: Maps the numbers to text
+        days_map = {
+            '0': 'MONDAY - SATURDAY',
+            '8': 'MONDAY - FRIDAY',
+            '1': 'MONDAY', '2': 'TUESDAY', '3': 'WEDNESDAY',
+            '4': 'THURSDAY', '5': 'FRIDAY', '6': 'SATURDAY', '7': 'SUNDAY'
+        }
+        
+        workout = Workout(
+            day=days_map[form.day.data], 
+            day_order=int(form.day.data), 
+            time=form.time.data, 
+            class_name=form.class_name.data, 
+            coach=form.coach.data
+        )
         db.session.add(workout)
         db.session.commit()
         return redirect(url_for('schedule'))
@@ -189,29 +204,18 @@ def delete_coach(id):
 
 # --- DATABASE CREATION (Runs on Deploy) ---
 with app.app_context():
-    # SAFE MODE: Create tables if they don't exist
+    # Safe Create: Only creates tables if they don't exist
     db.create_all()
     
-    # ONLY add dummy data if the database is empty (prevent duplicates)
+    # Initial Admin Setup (Only runs once)
     if not User.query.first():
-        # ADMIN USER
         admin = User(username="admin", password=generate_password_hash("admin123"))
         db.session.add(admin)
         
-        # DUMMY SCHEDULE
-        db.session.add(Workout(day="Monday", day_order=1, time="19:00", class_name="BOXING FOUNDATIONS", coach="Giorgi"))
-        db.session.add(Workout(day="Tuesday", day_order=2, time="09:00", class_name="HIIT BOXING", coach="Levan"))
-        
-        # DUMMY PRICES
-        db.session.add(Price(title="FIGHTER", cost="150 GEL", frequency="/ Month", features="Unlimited Classes,Gym Access,Locker"))
-        db.session.add(Price(title="CHAMPION", cost="250 GEL", frequency="/ Month", features="Private Coach (2x),Unlimited Classes,Sauna", is_featured=True))
-        
-        # DUMMY COACHES
-        db.session.add(Coach(name="GIORGI", title="HEAD COACH", photo_url="https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?q=80&w=800"))
-        db.session.add(Coach(name="LEVAN", title="BOXING INSTRUCTOR", photo_url="https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?q=80&w=800"))
+        # NOTE: Dummy data removed so you can add real data manually
         
         db.session.commit()
-        print("Database initialized with dummy data.")
+        print("Database initialized.")
 
 if __name__ == '__main__':
     app.run(debug=True)
