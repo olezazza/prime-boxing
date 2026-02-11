@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRIME BOXING | TBILISI</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: ["class"],
+            theme: {
+                container: { center: true, padding: "2rem", screens: { "2xl": "1400px" } },
+                extend: {
+                    fontFamily: { display: ["Bebas Neue", "sans-serif"], body: ["Inter", "sans-serif"] },
+                    colors: {
+                        background: "hsl(0, 0%, 0%)",
+                        foreground: "hsl(0, 0%, 100%)",
+                        primary: "hsl(54, 100%, 50%)",
+                        muted: "hsl(0, 0%, 8%)",
+                        "muted-foreground": "hsl(0, 0%, 55%)",
+                        border: "hsl(0, 0%, 15%)"
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: black; color: white; }
+        .font-display { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen bg-background text-foreground selection:bg-primary selection:text-black">
+
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+        <div class="container mx-auto flex items-center justify-between h-20 px-4"> <a href="{{ url_for('home') }}" class="hover:opacity-80 transition">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="PRIME BOXING" class="h-16 w-auto"> </a>
+
+            <div class="hidden md:flex items-center gap-10"> <a href="{{ url_for('home') }}" class="font-display text-xl tracking-widest text-primary hover:text-white transition">HOME</a>
+                <a href="{{ url_for('schedule') }}" class="font-display text-xl tracking-widest text-foreground hover:text-primary transition">SCHEDULE</a>
+                <a href="{{ url_for('gallery') }}" class="font-display text-xl tracking-widest text-foreground hover:text-primary transition">COACHES</a>
+                <a href="{{ url_for('prices') }}" class="font-display text-xl tracking-widest text-foreground hover:text-primary transition">MEMBERSHIP</a>
+
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('logout') }}" class="text-red-500 font-display text-xl tracking-widest">LOGOUT</a>
+                {% else %}
+                    <a href="https://www.instagram.com/primeboxing_club/" target="_blank" class="bg-primary text-black font-display text-xl tracking-widest px-8 py-2 hover:bg-white transition-colors skew-x-[-10deg]">
+                        <span class="skew-x-[10deg] inline-block">INSTAGRAM</span>
+                    </a>
+                {% endif %}
+            </div>
+
+            <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="md:hidden text-foreground">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+            </button>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-background border-b border-border">
+            <div class="flex flex-col px-4 py-6 gap-6">
+                <a href="{{ url_for('home') }}" class="font-display text-2xl tracking-widest text-primary">HOME</a>
+                <a href="{{ url_for('schedule') }}" class="font-display text-2xl tracking-widest text-foreground hover:text-primary">SCHEDULE</a>
+                <a href="{{ url_for('gallery') }}" class="font-display text-2xl tracking-widest text-foreground hover:text-primary">COACHES</a>
+                <a href="{{ url_for('prices') }}" class="font-display text-2xl tracking-widest text-foreground hover:text-primary">MEMBERSHIP</a>
+                <a href="https://www.instagram.com/primeboxing_club/" target="_blank" class="bg-primary text-black font-display text-2xl tracking-widest px-6 py-4 text-center">INSTAGRAM</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-muted border-t border-border py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-3xl tracking-widest text-primary mb-4 font-display">PRIME BOXING</h3>
+                    <p class="text-muted-foreground text-sm leading-relaxed">
+                        Where fighters are forged.<br />No shortcuts. No excuses.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-display text-xl tracking-widest text-white mb-4">NAVIGATE</h4>
+                    <div class="flex flex-col gap-2">
+                        <a href="{{ url_for('home') }}" class="text-gray-500 text-sm hover:text-primary transition-colors">HOME</a>
+                        <a href="{{ url_for('schedule') }}" class="text-gray-500 text-sm hover:text-primary transition-colors">SCHEDULE</a>
+                        <a href="{{ url_for('gallery') }}" class="text-gray-500 text-sm hover:text-primary transition-colors">COACHES</a>
+                        <a href="{{ url_for('prices') }}" class="text-gray-500 text-sm hover:text-primary transition-colors">MEMBERSHIP</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-display text-xl tracking-widest text-white mb-4">LOCATION</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-4">
+                        MIRIAN MEPHE 46<br />
+                        DIGHOMI CITY, 3RD FLOOR<br />
+                        TBILISI, GEORGIA
+                    </p>
+                    <p class="text-primary text-2xl font-display tracking-wide">
+                        +995 579 204 365
+                    </p>
+                </div>
+            </div>
+            <div class="border-t border-border mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-gray-600 text-xs">© 2026 PRIME BOXING. ALL RIGHTS RESERVED.</p>
+                <a href="{{ url_for('login') }}" class="text-gray-800 text-xs hover:text-primary transition-colors">ADMIN ACCESS</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

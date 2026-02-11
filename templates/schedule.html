@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="pt-32 pb-20 container mx-auto px-6 min-h-screen">
+
+    <div class="flex justify-between items-end mb-12 border-b border-white/10 pb-6">
+        <div>
+            <h1 class="font-display text-6xl md:text-8xl text-white leading-none">WEEKLY<br><span class="text-primary">WAR</span></h1>
+        </div>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('create_workout') }}" class="bg-white text-black font-bold px-6 py-2 hover:bg-primary transition text-sm">+ ADD CLASS</a>
+        {% endif %}
+    </div>
+
+    <div class="hidden md:block">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="text-primary font-display text-2xl border-b-2 border-primary tracking-wide">
+                    <th class="py-4 pr-4">DAY</th>
+                    <th class="py-4 px-4">TIME</th>
+                    <th class="py-4 px-4">CLASS</th>
+                    <th class="py-4 px-4">COACH</th>
+                    {% if current_user.is_authenticated %}<th class="py-4 text-right">EDIT</th>{% endif %}
+                </tr>
+            </thead>
+            <tbody class="text-lg font-bold">
+                {% for w in workouts %}
+                <tr class="border-b border-white/5 hover:bg-white/5 transition group">
+                    <td class="py-6 pr-4 text-primary group-hover:pl-2 transition-all">{{ w.day }}</td>
+                    <td class="py-6 px-4 font-mono text-gray-400">{{ w.time }}</td>
+                    <td class="py-6 px-4 font-display text-3xl tracking-wide">{{ w.class_name }}</td>
+                    <td class="py-6 px-4 text-gray-500 uppercase text-sm tracking-widest">{{ w.coach }}</td>
+                    {% if current_user.is_authenticated %}
+                    <td class="py-6 text-right">
+                        <a href="{{ url_for('delete_workout', id=w.id) }}" class="text-red-500 text-xs hover:text-white border border-red-500 px-2 py-1 hover:bg-red-500 transition">DELETE</a>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="md:hidden flex flex-col gap-4">
+        {% for w in workouts %}
+        <div class="bg-white/5 border border-white/10 p-6 relative">
+            <div class="flex justify-between items-start mb-4">
+                <span class="text-primary font-display text-2xl tracking-wide">{{ w.day }}</span>
+                <span class="bg-primary text-black font-bold px-2 py-1 text-xs">{{ w.time }}</span>
+            </div>
+            <h3 class="text-white font-display text-4xl mb-2">{{ w.class_name }}</h3>
+            <p class="text-gray-500 text-sm tracking-widest uppercase">COACH: {{ w.coach }}</p>
+
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('delete_workout', id=w.id) }}" class="absolute bottom-6 right-6 text-red-500 text-xs font-bold">DELETE</a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

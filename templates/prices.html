@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="pt-32 pb-20 container mx-auto px-6 min-h-screen">
+
+    <div class="text-center mb-20">
+        <h1 class="font-display text-6xl md:text-9xl text-white mb-4 leading-none">JOIN THE<br><span class="text-transparent stroke-white" style="-webkit-text-stroke: 2px white;">TEAM</span></h1>
+
+        {% if current_user.is_authenticated %}
+            <div class="mt-8">
+                <a href="{{ url_for('create_price') }}" class="bg-white text-black font-bold px-6 py-3 hover:bg-primary transition text-sm">+ ADD NEW PLAN</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+        {% for p in plans %}
+        <div class="relative p-8 border-2 {% if p.is_featured %}border-primary bg-white/5 scale-105 shadow-[0_0_30px_rgba(241,211,53,0.1)]{% else %}border-white/10 hover:border-white/30{% endif %} transition duration-300 flex flex-col h-full">
+
+            {% if p.is_featured %}
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-black font-display tracking-widest px-4 py-1 text-sm border-2 border-black">
+                    MOST POPULAR
+                </div>
+            {% endif %}
+
+            <h3 class="font-display text-3xl text-white mb-2">{{ p.title }}</h3>
+            <div class="flex items-baseline gap-2 mb-8 border-b border-white/10 pb-8">
+                <span class="text-5xl font-bold text-primary">{{ p.cost }}</span>
+                <span class="text-gray-500 text-sm font-bold">{{ p.frequency }}</span>
+            </div>
+
+            <ul class="space-y-4 mb-10 flex-grow">
+                {% for feature in p.features.split(',') %}
+                <li class="flex items-start gap-3 text-gray-300 text-sm font-bold">
+                    <span class="text-primary text-lg leading-none">▪</span> {{ feature }}
+                </li>
+                {% endfor %}
+            </ul>
+
+            <a href="https://www.instagram.com/primeboxing_club/" target="_blank" class="w-full py-4 font-display text-xl tracking-widest uppercase transition-all duration-300 text-center block {% if p.is_featured %}bg-primary text-black hover:bg-white{% else %}border border-white text-white hover:bg-white hover:text-black{% endif %}">
+                DM US
+            </a>
+
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('delete_price', id=p.id) }}" class="text-center text-red-500 text-xs mt-4 hover:underline block">DELETE PLAN</a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+
+    <div class="absolute inset-0 z-0">
+        <video autoplay muted loop playsinline
+               class="w-full h-full object-cover grayscale opacity-60">
+            <source src="{{ url_for('static', filename='videos/hero.mp4') }}" type="video/mp4">
+        </video>
+    </div>
+
+    <div class="absolute inset-0 bg-black/50 z-0"></div>
+
+    <div class="relative z-10 container mx-auto px-4 text-center mt-16">
+        <p class="font-display text-lg md:text-xl tracking-[0.3em] text-primary mb-4 animate-pulse">
+            LET'S GO CHAMP 🥊
+        </p>
+
+        <h1 class="font-display text-7xl sm:text-8xl md:text-9xl lg:text-[10rem] leading-[0.85] text-white mb-8">
+            WE BUILD<br />FIGHTERS
+        </h1>
+
+        <p class="text-gray-300 text-lg md:text-xl max-w-xl mx-auto mb-10">
+            Step in. Come and Hit. The real boxing experience in Dighomi.
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{{ url_for('prices') }}"
+               class="bg-primary text-black font-display text-xl tracking-widest px-10 py-4 hover:bg-white transition-colors inline-block skew-x-[-10deg]">
+                <span class="skew-x-[10deg] inline-block">START TRAINING</span>
+            </a>
+
+            <a href="{{ url_for('schedule') }}"
+               class="border-2 border-white text-white font-display text-xl tracking-widest px-10 py-4 hover:border-primary hover:text-primary transition-colors inline-block skew-x-[-10deg] backdrop-blur-sm">
+               <span class="skew-x-[10deg] inline-block">VIEW SCHEDULE</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="border-y border-border bg-black relative z-10">
+    <div class="container mx-auto grid grid-cols-2 md:grid-cols-4">
+        <div class="py-12 px-4 text-center border-r border-border">
+            <p class="font-display text-5xl md:text-6xl text-primary">500+</p>
+            <p class="font-display text-sm tracking-widest text-gray-500 mt-2">FIGHTERS TRAINED</p>
+        </div>
+        <div class="py-12 px-4 text-center md:border-r border-border">
+            <p class="font-display text-5xl md:text-6xl text-primary">12</p>
+            <p class="font-display text-sm tracking-widest text-gray-500 mt-2">PRO COACHES</p>
+        </div>
+        <div class="py-12 px-4 text-center border-r border-border">
+            <p class="font-display text-5xl md:text-6xl text-primary">1ST</p>
+            <p class="font-display text-sm tracking-widest text-gray-500 mt-2">BOXING GYM IN TBILISI</p>
+        </div>
+        <div class="py-12 px-4 text-center">
+            <p class="font-display text-5xl md:text-6xl text-primary">100%</p>
+            <p class="font-display text-sm tracking-widest text-gray-500 mt-2">REAL BOXING</p>
+        </div>
+    </div>
+</section>
+
+<section class="py-24 bg-black">
+    <div class="container mx-auto px-4 max-w-3xl text-center">
+        <h2 class="font-display text-5xl md:text-7xl text-white mb-6">
+            NO SHORTCUTS.<br /><span class="text-primary">JUST WORK.</span>
+        </h2>
+        <p class="text-gray-400 text-lg leading-relaxed">
+            Prime Boxing isn't for everyone. We train fighters who refuse to quit.
+            Located in the heart of Dighomi City, our facility is built for one purpose:
+            making you dangerous.
+        </p>
+    </div>
+</section>
+
+<section class="bg-primary py-16">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="font-display text-5xl md:text-6xl text-black mb-4">
+            READY TO FIGHT?
+        </h2>
+        <p class="text-black/80 text-lg mb-8 font-bold">
+            Stop waiting. Pick a plan and get in the ring.
+        </p>
+        <a href="{{ url_for('prices') }}"
+           class="bg-black text-primary font-display text-xl tracking-widest px-10 py-4 hover:bg-gray-900 transition-colors inline-block shadow-lg border border-primary skew-x-[-10deg]">
+            <span class="skew-x-[10deg] inline-block">CHECK MEMBERSHIPS</span>
+        </a>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="h-screen flex items-center justify-center px-6">
+
+    <div class="w-full max-w-sm">
+        <div class="text-center mb-10">
+            <h1 class="font-display text-4xl text-white">ADMIN ACCESS</h1>
+            <p class="text-gray-600 text-xs tracking-widest mt-2">AUTHORIZED PERSONNEL ONLY</p>
+        </div>
+
+        <form method="POST" class="space-y-6">
+            {{ form.hidden_tag() }}
+
+            <div class="space-y-1">
+                <label class="text-xs font-bold text-primary tracking-widest">USERNAME</label>
+                {{ form.username(class="w-full bg-black border-b-2 border-white/20 py-3 text-white focus:border-primary outline-none transition placeholder-gray-700 rounded-none", placeholder="ENTER ID") }}
+            </div>
+
+            <div class="space-y-1">
+                <label class="text-xs font-bold text-primary tracking-widest">PASSWORD</label>
+                {{ form.password(class="w-full bg-black border-b-2 border-white/20 py-3 text-white focus:border-primary outline-none transition placeholder-gray-700 rounded-none", placeholder="ENTER KEY") }}
+            </div>
+
+            <div class="pt-6">
+                {{ form.submit(class="w-full bg-white text-black font-display text-xl py-4 hover:bg-primary transition cursor-pointer tracking-widest") }}
+            </div>
+        </form>
+
+        <div class="text-center mt-8">
+            <a href="{{ url_for('home') }}" class="text-gray-600 text-[10px] hover:text-white tracking-widest">RETURN TO SITE</a>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
