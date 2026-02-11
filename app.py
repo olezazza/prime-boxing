@@ -33,7 +33,7 @@ login_manager.login_view = 'login'
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
-    # FIXED: Changed from 60 to 255 to fit the long password hash
+    # SECURE PASSWORD LENGTH (Fixed)
     password = db.Column(db.String(255), nullable=False)
 
 class Workout(db.Model):
@@ -189,12 +189,10 @@ def delete_coach(id):
 
 # --- DATABASE CREATION (Runs on Deploy) ---
 with app.app_context():
-    # NUCLEAR OPTION: Deletes the old broken table so we can create the fixed one
-    db.drop_all() 
-    
+    # SAFE MODE: Create tables if they don't exist
     db.create_all()
     
-    # If no users exist (Brand new DB), create the Admin and Dummy Data
+    # ONLY add dummy data if the database is empty (prevent duplicates)
     if not User.query.first():
         # ADMIN USER
         admin = User(username="admin", password=generate_password_hash("admin123"))
