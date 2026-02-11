@@ -29,13 +29,12 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-
 # --- MODELS ---
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
-    password = db.Column(db.String(60), nullable=False)
-
+    # FIXED: Changed from 60 to 255 to fit the long password hash
+    password = db.Column(db.String(255), nullable=False)
 
 class Workout(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -45,7 +44,6 @@ class Workout(db.Model):
     class_name = db.Column(db.String(100), nullable=False)
     coach = db.Column(db.String(100), nullable=False)
 
-
 class Price(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -54,20 +52,17 @@ class Price(db.Model):
     features = db.Column(db.Text, nullable=False)
     is_featured = db.Column(db.Boolean, default=False)
 
-
 class Coach(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     title = db.Column(db.String(100), nullable=False)
     photo_url = db.Column(db.String(500), nullable=False)
 
-
 # --- FORMS ---
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
-
 
 class WorkoutForm(FlaskForm):
     day = SelectField('Day', choices=[
@@ -79,7 +74,6 @@ class WorkoutForm(FlaskForm):
     coach = StringField('Coach Name', validators=[DataRequired()])
     submit = SubmitField('Save Class')
 
-
 class PriceForm(FlaskForm):
     title = StringField('Plan Title', validators=[DataRequired()])
     cost = StringField('Cost (e.g. 150 GEL)', validators=[DataRequired()])
@@ -88,42 +82,35 @@ class PriceForm(FlaskForm):
     is_featured = SelectField('Highlight?', choices=[('0', 'No'), ('1', 'Yes')])
     submit = SubmitField('Save Plan')
 
-
 class CoachForm(FlaskForm):
     name = StringField('Coach Name', validators=[DataRequired()])
     title = StringField('Title', validators=[DataRequired()])
     photo_url = StringField('Photo URL (Use Unsplash or leave blank)', validators=[DataRequired()])
     submit = SubmitField('Save Coach')
 
-
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-
 
 # --- ROUTES ---
 @app.route("/")
 def home():
     return render_template('home.html')
 
-
 @app.route("/schedule")
 def schedule():
     workouts = Workout.query.order_by(Workout.day_order, Workout.time).all()
     return render_template('schedule.html', workouts=workouts)
-
 
 @app.route("/prices")
 def prices():
     plans = Price.query.all()
     return render_template('prices.html', plans=plans)
 
-
 @app.route("/gallery")
 def gallery():
     coaches = Coach.query.all()
     return render_template('gallery.html', coaches=coaches)
-
 
 # --- ADMIN ROUTES ---
 @app.route("/login", methods=['GET', 'POST'])
@@ -137,12 +124,10 @@ def login():
             return redirect(url_for('home'))
     return render_template('login.html', form=form)
 
-
 @app.route("/logout")
 def logout():
     logout_user()
     return redirect(url_for('home'))
-
 
 # WORKOUT ADMIN
 @app.route("/admin/workout/new", methods=['GET', 'POST'])
@@ -150,15 +135,12 @@ def logout():
 def create_workout():
     form = WorkoutForm()
     if form.validate_on_submit():
-        days_map = {'1': 'Monday', '2': 'Tuesday', '3': 'Wednesday', '4': 'Thursday', '5': 'Friday', '6': 'Saturday',
-                    '7': 'Sunday'}
-        workout = Workout(day=days_map[form.day.data], day_order=int(form.day.data), time=form.time.data,
-                          class_name=form.class_name.data, coach=form.coach.data)
+        days_map = {'1':'Monday', '2':'Tuesday', '3':'Wednesday', '4':'Thursday', '5':'Friday', '6':'Saturday', '7':'Sunday'}
+        workout = Workout(day=days_map[form.day.data], day_order=int(form.day.data), time=form.time.data, class_name=form.class_name.data, coach=form.coach.data)
         db.session.add(workout)
         db.session.commit()
         return redirect(url_for('schedule'))
     return render_template('create_content.html', form=form, title="ADD CLASS")
-
 
 @app.route("/admin/workout/delete/<int:id>")
 @login_required
@@ -167,20 +149,17 @@ def delete_workout(id):
     db.session.commit()
     return redirect(url_for('schedule'))
 
-
 # PRICE ADMIN
 @app.route("/admin/price/new", methods=['GET', 'POST'])
 @login_required
 def create_price():
     form = PriceForm()
     if form.validate_on_submit():
-        plan = Price(title=form.title.data, cost=form.cost.data, frequency=form.frequency.data,
-                     features=form.features.data, is_featured=(form.is_featured.data == '1'))
+        plan = Price(title=form.title.data, cost=form.cost.data, frequency=form.frequency.data, features=form.features.data, is_featured=(form.is_featured.data == '1'))
         db.session.add(plan)
         db.session.commit()
         return redirect(url_for('prices'))
     return render_template('create_content.html', form=form, title="ADD PRICE")
-
 
 @app.route("/admin/price/delete/<int:id>")
 @login_required
@@ -188,7 +167,6 @@ def delete_price(id):
     db.session.delete(Price.query.get_or_404(id))
     db.session.commit()
     return redirect(url_for('prices'))
-
 
 # COACH ADMIN
 @app.route("/admin/coach/new", methods=['GET', 'POST'])
@@ -202,7 +180,6 @@ def create_coach():
         return redirect(url_for('gallery'))
     return render_template('create_content.html', form=form, title="ADD COACH")
 
-
 @app.route("/admin/coach/delete/<int:id>")
 @login_required
 def delete_coach(id):
@@ -210,33 +187,31 @@ def delete_coach(id):
     db.session.commit()
     return redirect(url_for('gallery'))
 
-
 # --- DATABASE CREATION (Runs on Deploy) ---
 with app.app_context():
+    # NUCLEAR OPTION: Deletes the old broken table so we can create the fixed one
+    db.drop_all() 
+    
     db.create_all()
+    
     # If no users exist (Brand new DB), create the Admin and Dummy Data
     if not User.query.first():
         # ADMIN USER
         admin = User(username="admin", password=generate_password_hash("admin123"))
         db.session.add(admin)
-
+        
         # DUMMY SCHEDULE
-        db.session.add(
-            Workout(day="Monday", day_order=1, time="19:00", class_name="BOXING FOUNDATIONS", coach="Giorgi"))
+        db.session.add(Workout(day="Monday", day_order=1, time="19:00", class_name="BOXING FOUNDATIONS", coach="Giorgi"))
         db.session.add(Workout(day="Tuesday", day_order=2, time="09:00", class_name="HIIT BOXING", coach="Levan"))
-
+        
         # DUMMY PRICES
-        db.session.add(
-            Price(title="FIGHTER", cost="150 GEL", frequency="/ Month", features="Unlimited Classes,Gym Access,Locker"))
-        db.session.add(Price(title="CHAMPION", cost="250 GEL", frequency="/ Month",
-                             features="Private Coach (2x),Unlimited Classes,Sauna", is_featured=True))
-
+        db.session.add(Price(title="FIGHTER", cost="150 GEL", frequency="/ Month", features="Unlimited Classes,Gym Access,Locker"))
+        db.session.add(Price(title="CHAMPION", cost="250 GEL", frequency="/ Month", features="Private Coach (2x),Unlimited Classes,Sauna", is_featured=True))
+        
         # DUMMY COACHES
-        db.session.add(Coach(name="GIORGI", title="HEAD COACH",
-                             photo_url="https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?q=80&w=800"))
-        db.session.add(Coach(name="LEVAN", title="BOXING INSTRUCTOR",
-                             photo_url="https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?q=80&w=800"))
-
+        db.session.add(Coach(name="GIORGI", title="HEAD COACH", photo_url="https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?q=80&w=800"))
+        db.session.add(Coach(name="LEVAN", title="BOXING INSTRUCTOR", photo_url="https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?q=80&w=800"))
+        
         db.session.commit()
         print("Database initialized with dummy data.")
 
